@@ -10,14 +10,14 @@ Obrigado por utilizar. :)
 Você pode encontrar as últimas versões disponíveis abaixo:  
 
 
-<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https://img.shields.io/badge/desktop-v1.1.0-violet?style=for-the-badge&logo=windows"></a>
+<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https://img.shields.io/badge/desktop-v1.2.0-violet?style=for-the-badge&logo=windows"></a>
 
 #### Desktop (PC)
 
 Atualmente a versão para Desktop está disponível na [aqui](https://github.com/Mateus7G/crp-iframe-player/releases/latest).  
 Para instalar veja o passo a passo [para pc](#%EF%B8%8F-como-instalar-desktop).
 
-<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.1.0-violet?style=for-the-badge&logo=android"></a>
+<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.2.0-violet?style=for-the-badge&logo=android"></a>
 
 #### Android (Kiwi)
 
@@ -79,5 +79,5 @@ Verifique se o seu navegador está atualizado e prossiga:
 ## 📝 Aviso Crunchyroll Beta
 O novo site do Crunchyroll **quebra completamente** a extensão: [26#issuecomment-1006569041](https://github.com/Mateus7G/crp-iframe-player/issues/26#issuecomment-1006569041)  
 
-A nova versão (v1.1.0) **ainda** é compatível pois ao acessar o novo site, seu navegador puxa os dados do vídeo do site antigo.  
+As novas versões (v1.1.0+) **ainda** são compatível pois ao acessar o novo site, seu navegador puxa os dados do vídeo do site antigo.  
 Isso quer dizer que, se a versão antiga do Crunchyroll for **completamente substituída** a extensão irá parar de funcionar permanentemente.
