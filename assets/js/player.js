@@ -14,10 +14,12 @@ window.addEventListener("message", async e => {
   const promises = [], request = [];
   const r = { 0: '720', 1: '1080', 2: '480', 3: '360', 4: '240' };
   for (let i in r) promises[i] = new Promise((resolve, reject) => request[i] = { resolve, reject });
+  const lgLangs = { "ptBR": "Português (BR)", "enUS": "English (US)", "enGB": "English (UK)", "esLA": "Español (LA)", "esES": "Español (ES)", "ptPT": "Português (PT)", "frFR": "Français (FR)", "deDE": "Deutsch (DE)", "arME": "(ME) عربي", "itIT": "Italiano (IT)", "ruRU": "Русский (RU)" }
+  const epLangs = { "ptBR": "Episódio", "enUS": "Episode", "enGB": "Episode", "esLA": "Episodio", "esES": "Episodio", "ptPT": "Episódio", "frFR": "Épisode", "deDE": "Folge", "arME": "الحلقة", "itIT": "Episodio", "ruRU": "Серия" };
+  const fnLangs = { "ptBR": "FINAL", "enUS": "FINAL", "enGB": "FINAL", "esLA": "FINAL", "esES": "FINAL", "ptPT": "FINAL", "frFR": "FINALE", "deDE": "FINALE", "arME": "نهائي", "itIT": "FINALE", "ruRU": "ФИНАЛЬНЫЙ" };
 
   let is_beta = e.data.beta;
   let force_mp4 = e.data.force_mp4;
-  let m3u8rgx = /http.*$/gm;
   let streamrgx = /_,(\d+.mp4),(\d+.mp4),(\d+.mp4),(?:(\d+.mp4),(\d+.mp4),)?.*?m3u8/;
   let video_config_media = await getConfigMedia(e.data.video_config_media, e.data.old_url);
   let video_id = video_config_media['metadata']['id'];
@@ -29,10 +31,11 @@ window.addEventListener("message", async e => {
   let user_lang = e.data.lang;
   let series = e.data.series;
   let video_stream_url = "";
-  let video_m3u8_array = [];
-  let video_mp4_array = [];
-  let rows_number = -1;
-  let sources = [];
+  let stream_languages = [];
+  let video_m3u8_array = {};
+  let video_mp4_array = {};
+  let rows_number = {};
+  let tracks = {};
   let dlSize = [];
   let dlUrl = [];
   for (let idx in r) {
@@ -44,41 +47,40 @@ window.addEventListener("message", async e => {
 
   // Obter streams
   const streamlist = video_config_media['streams'];
-  const hasUserLang = streamlist.find(stream => stream.hardsub_lang == user_lang);
-  const search_lang = hasUserLang ? user_lang : null;
+  const sourceLocale = getSourceLocale()
 
   for (let stream of streamlist) {
+    const streamLang = stream.hardsub_lang ? stream.hardsub_lang : 'off';
+    if (!video_mp4_array[streamLang]) { stream_languages.push(streamLang); tracks[streamLang] = []; video_mp4_array[streamLang] = []; rows_number[streamLang] = -1 }
+
     // Padrão
-    if (stream.format == 'adaptive_hls' && stream.hardsub_lang == search_lang) {
+    if (stream.format == 'adaptive_hls') {
       video_stream_url = stream.url;
-      video_m3u8_array = force_mp4 ? mp4ListFromStream(video_stream_url) : await m3u8ListFromStream(video_stream_url);
-      video_mp4_array = mp4ListFromStream(video_stream_url);
-      break;
+      video_m3u8_array[streamLang] = force_mp4 ? mp4ListFromStream(video_stream_url) : await m3u8ListFromStream(video_stream_url);
+      video_mp4_array[streamLang] = mp4ListFromStream(video_stream_url);
     }
     // Premium
-    if (stream.format == 'trailer_hls' && stream.hardsub_lang == search_lang)
-      if (++rows_number <= 4) {
-        // TODO: video_m3u8_array.push(await getDirectStream(stream.url, rows_number));
-        const arr_idx = (rows_number === 0 ? 2 : (rows_number === 2 ? 0 : rows_number));
-        video_mp4_array[arr_idx] = getDirectFile(stream.url);
-        video_m3u8_array = video_mp4_array;
-        if (rows_number == 4) {
-          resolveAll();
-          break;
-        }
+    else if (stream.format == 'trailer_hls')
+      if (++rows_number[streamLang] <= 4) {
+        // TODO: video_m3u8_array.push(await getDirectStream(stream.url, rows_number[streamLang]));
+        const arr_idx = (rows_number[streamLang] === 0 ? 2 : (rows_number[streamLang] === 2 ? 0 : rows_number[streamLang]));
+        video_mp4_array[streamLang][arr_idx] = getDirectFile(stream.url);
+        video_m3u8_array[streamLang] = video_mp4_array[streamLang];
       }
   }
 
   // Carregar player assim que encontrar as URLs dos m3u8.
+  resolveAll();
   Promise.all(promises).then(() => {
-    if (Array.isArray(video_m3u8_array)) {
-      for (let idx of [1, 0, 2, 3, 4]) {
-        const type = video_m3u8_array[idx].endsWith('#.m3u8') ? 'm3u' : 'mp4'
-        sources.push({ file: video_m3u8_array[idx], label: toResolution(r[idx]), type });
-      }
-      sortSources();
-    } else
-      sources = { file: video_m3u8_array, type: "m3u" }
+    stream_languages.forEach(lang => {
+      if (Array.isArray(video_m3u8_array[lang]))
+        for (let idx of [1, 0, 2, 3, 4]) {
+          const type = video_m3u8_array[lang][idx].endsWith('#.m3u8') ? 'm3u' : 'mp4'
+          tracks[lang].push({ file: video_m3u8_array[lang][idx], label: toResolution(r[idx]), type });
+        }
+      else
+        tracks[lang] = { file: video_m3u8_array[lang], type: "m3u" }
+    })
     startPlayer();
   });
 
@@ -91,7 +93,8 @@ window.addEventListener("message", async e => {
           "title": getLocalEpisodeTitle(),
           "description": video_config_media['metadata']['title'],
           "image": video_config_media['thumbnail']['url'],
-          "sources": sources
+          "sources": tracks[sourceLocale] || tracks["off"],
+          "tracks": buildTracks(tracks)
         },
         up_next_enable && up_next ? {
           "autoplaytimer": 0,
@@ -122,6 +125,24 @@ window.addEventListener("message", async e => {
         localStorage.setItem("next_up_fullscreen", jwplayer().getFullscreen());
         window.top.location.href = up_next;
       }
+    }).on("captionsChanged", el => {
+      const { tracks: captions, track: captionIndex } = el
+      const position = jwplayer().getPosition()
+      playlist = jwplayer().getPlaylist()
+      trackId = captions[captionIndex].id
+      track = trackId === "off" ? tracks["off"] : (trackId === "default" ? tracks[locale] || tracks["off"] : trackId)
+      playlist[0].file = undefined
+      playlist[0].allSources = undefined
+      playlist[0].sources = track
+      playlist[0].tracks = buildTracks(tracks)
+      jwplayer().load(playlist)
+      jwplayer().play()
+      const seek = setInterval(el => {
+        if (jwplayer().getState() === 'playing') {
+          jwplayer().seek(position)
+          clearInterval(seek)
+        }
+      }, 5)
     })
 
     // Variaveis para os botões.
@@ -188,7 +209,8 @@ window.addEventListener("message", async e => {
 
     // Definir URL e Tamanho na lista de download
     for (let id of [1, 0, 2, 3, 4]) {
-      dlUrl[id].href = video_mp4_array[id];
+      const sourceLang = getSourceLocale()
+      dlUrl[id].href = video_mp4_array[sourceLang][id];
       dlUrl[id].download = video_config_media['metadata']['title'];
     }
 
@@ -245,10 +267,11 @@ window.addEventListener("message", async e => {
   }
 
   /* ~~~~~~~~~~ FUNÇÕES ~~~~~~~~~~ */
-  // Checa se o URL do video_mp4_array[id] existe e calcula o tamanho p/ download
+  // Checa se o URL do video_mp4_array[lang][id] existe e calcula o tamanho p/ download
   function linkDownload(id, tentativas = 0) {
-    console.log('  - Baixando: ', r[id])
-    let video_mp4_url = video_mp4_array[id];
+    const sourceLang = getSourceLocale()
+    console.log('  - Baixando (' + sourceLang + '): ', r[id])
+    let video_mp4_url = video_mp4_array[sourceLang][id];
     if (!video_mp4_url) return disableDownload(id)
 
     let fileSize = "";
@@ -278,8 +301,6 @@ window.addEventListener("message", async e => {
   }
 
   function getLocalEpisodeTitle() {
-    const epLangs = { "ptBR": "Episódio", "enUS": "Episode", "enGB": "Episode", "esLA": "Episodio", "esES": "Episodio", "ptPT": "Episódio", "frFR": "Épisode", "deDE": "Folge", "arME": "الحلقة", "itIT": "Episodio", "ruRU": "Серия" };
-    const fnLangs = { "ptBR": "FINAL", "enUS": "FINAL", "enGB": "FINAL", "esLA": "FINAL", "esES": "FINAL", "ptPT": "FINAL", "frFR": "FINALE", "deDE": "FINALE", "arME": "نهائي", "itIT": "FINALE", "ruRU": "ФИНАЛЬНЫЙ" };
     const episode_translate = `${epLangs[user_lang[0]] ? epLangs[user_lang[0]] : "Episode"} `;
     const final_translate = ` (${fnLangs[user_lang[0]] ? fnLangs[user_lang[0]] : "FINAL"})`;
 
@@ -311,7 +332,9 @@ window.addEventListener("message", async e => {
     if (video_config_media)
       return JSON.parse(video_config_media)
     else if (old_url) {
-      const media_content = await getVilosMedia(old_url)
+      const localelessUrl = old_url.split('/').length == 6 ? old_url.replace(/\.com\/[^/]*?\//, '.com/') : old_url
+      console.log("[CR Beta] URL universal:", localelessUrl)
+      const media_content = await getVilosMedia(localelessUrl)
       return JSON.parse(media_content)
     }
     else return {}
@@ -372,10 +395,6 @@ window.addEventListener("message", async e => {
     setTimeout(() => request.forEach(promise => promise.resolve()), 400)
   }
 
-  function sortSources() {
-    sources = sources.sort((el1, el2) => parseInt(el1.label) > parseInt(el2.label) ? -1 : 1)
-  }
-
   function toResolution(resolution) {
     return parseInt(resolution) >= 720 ? `${resolution}p<sup><sup>HD</sup></sup>` : `${resolution}p`
   }
@@ -385,5 +404,25 @@ window.addEventListener("message", async e => {
     dlUrl[id].style.cursor = "default";
     dlUrl[id].style.filter = "invert(49%)"
     dlSize[id].innerText = "🚫"
+  }
+
+  function buildTracks(tracks) {
+    return Object.entries(tracks).map(entry => {
+      const [lang, track] = entry
+      return {
+        "kind": "captions",
+        "file": track,
+        "label": lgLangs[lang] || lang,
+        "language": lang
+      }
+    }).filter(track => track["language"] !== "off")
+  }
+
+  function getSourceLocale() {
+    const jwplayerLocale = Object.keys(lgLangs).find(el => lgLangs[el] === localStorage.getItem("jwplayer.captionLabel"))
+    if (!jwplayerLocale) localStorage.setItem("jwplayer.captionLabel", lgLangs[user_lang])
+    const sourceLocale = jwplayerLocale ? jwplayerLocale : user_lang
+    const hasUserLang = streamlist.find(stream => stream.hardsub_lang == sourceLocale);
+    return hasUserLang ? sourceLocale : 'off'
   }
 });
