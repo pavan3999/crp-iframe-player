@@ -11,9 +11,7 @@ window.addEventListener("message", async e => {
   console.log('[CR Premium] Player encontrado!')
 
   // Variáveis principais
-  const promises = [], request = [];
   const r = { 0: '720', 1: '1080', 2: '480', 3: '360', 4: '240' };
-  for (let i in r) promises[i] = new Promise((resolve, reject) => request[i] = { resolve, reject });
   const lgLangs = { "ptBR": "Português (BR)", "enUS": "English (US)", "enGB": "English (UK)", "esLA": "Español (LA)", "esES": "Español (ES)", "ptPT": "Português (PT)", "frFR": "Français (FR)", "deDE": "Deutsch (DE)", "arME": "(ME) عربي", "itIT": "Italiano (IT)", "ruRU": "Русский (RU)" }
   const epLangs = { "ptBR": "Episódio", "enUS": "Episode", "enGB": "Episode", "esLA": "Episodio", "esES": "Episodio", "ptPT": "Episódio", "frFR": "Épisode", "deDE": "Folge", "arME": "الحلقة", "itIT": "Episodio", "ruRU": "Серия" };
   const fnLangs = { "ptBR": "FINAL", "enUS": "FINAL", "enGB": "FINAL", "esLA": "FINAL", "esES": "FINAL", "ptPT": "FINAL", "frFR": "FINALE", "deDE": "FINALE", "arME": "نهائي", "itIT": "FINALE", "ruRU": "ФИНАЛЬНЫЙ" };
@@ -69,22 +67,16 @@ window.addEventListener("message", async e => {
       }
   }
 
-  // Carregar player assim que encontrar as URLs dos m3u8.
-  resolveAll();
-  Promise.all(promises).then(() => {
-    stream_languages.forEach(lang => {
-      if (Array.isArray(video_m3u8_array[lang]))
-        for (let idx of [1, 0, 2, 3, 4]) {
-          const type = video_m3u8_array[lang][idx].endsWith('#.m3u8') ? 'm3u' : 'mp4'
-          tracks[lang].push({ file: video_m3u8_array[lang][idx], label: toResolution(r[idx]), type });
-        }
-      else
-        tracks[lang] = { file: video_m3u8_array[lang], type: "m3u" }
-    })
-    startPlayer();
+  // Popular tracks e carregar player
+  stream_languages.forEach(lang => {
+    if (Array.isArray(video_m3u8_array[lang]))
+      for (let idx of [1, 0, 2, 3, 4])
+        tracks[lang].push({ file: video_m3u8_array[lang][idx], label: toResolution(r[idx]) });
+    else
+      tracks[lang] = { file: video_m3u8_array[lang], type: "m3u" }
   });
 
-  function startPlayer() {
+  (() => {
     // Inicia o player
     let playerInstance = jwplayer("player_div")
     playerInstance.setup({
@@ -215,7 +207,7 @@ window.addEventListener("message", async e => {
     }
 
     // Funções para o player
-    jwplayer().on('ready', e => {
+    jwplayer().on('ready', () => {
       // Seta o tempo do video pro salvo no localStorage		
       if (localStorage.getItem(video_id) != null) {
         const t = localStorage.getItem(video_id);
@@ -229,9 +221,7 @@ window.addEventListener("message", async e => {
       }
 
       document.body.querySelector(".loading_container").style.display = "none";
-    });
-
-    jwplayer().on('viewable', e => {
+    }).on('viewable', () => {
       const old = document.querySelector('.jw-button-container > .jw-icon-rewind')
       if (!old) return
       const btn = query => document.querySelector(`div[button="${query}"]`)
@@ -243,30 +233,45 @@ window.addEventListener("message", async e => {
       }
       if (is_beta && document.getElementById('player_div'))
         document.getElementById('player_div').classList.add('beta-layout')
-    })
-
-    // Mostra uma tela de erro caso a legenda pedida não exista.
-    jwplayer().on('error', e => {
+    }).on('error', e => {
       console.log(e)
-      codes = { 232011: "https://i.imgur.com/OufoM33.mp4" };
-      if (codes[e.code]) {
-        jwplayer().load({
-          file: codes[e.code]
-        });
-        jwplayer().setControls(false);
-        jwplayer().setConfig({ repeat: true });
-        jwplayer().play();
-      }
     });
 
-    // Fica salvando o tempo do video a cada 7 segundos.
+    // Salva o tempo do video a cada 7 segundos.
     setInterval(() => {
       if (jwplayer().getState() == "playing")
         localStorage.setItem(video_id, jwplayer().getPosition());
     }, 7000);
-  }
+  })()
 
   /* ~~~~~~~~~~ FUNÇÕES ~~~~~~~~~~ */
+  // MP4 (download) - Premium: Obtem o link direto pelo trailer
+  function getDirectFile(url) {
+    return url.replace(/\/clipFrom.*?index.m3u8/, '').replace('_,', '_').replace(url.split("/")[2], "fy.v.vrv.co");
+  }
+
+  // MP4 (download) - Grátis: Obtem o link direto pelo padrão
+  function mp4ListFromStream(url) {
+    const cleanUrl = url.replace('evs1', 'evs').replace(url.split("/")[2], "fy.v.vrv.co");
+    const res = streamrgx.exec(cleanUrl).slice(1).map(streamfile => streamfile && cleanUrl.replace(streamrgx, `_${streamfile}`)).filter(el => el !== undefined);
+
+    if (res.length === 3) {
+      const [el1, el2, ...tail] = res
+      return [el2, el1, ...tail]
+    }
+    return res;
+  }
+
+  // M3U8 (assistir) - Premium: Obtem o link direto pelo trailer
+  function getDirectStream(url, idx) {
+    // TODO: assistir premium pelo m3u8 (por enquanto usamos o mp4)
+  }
+
+  // M3U8 (assistir) - Grátis: Obtem o link direto pelo padrão
+  async function m3u8ListFromStream(url) {
+    return url;
+  }
+
   // Checa se o URL do video_mp4_array[lang][id] existe e calcula o tamanho p/ download
   function linkDownload(id, tentativas = 0) {
     const sourceLang = getSourceLocale()
@@ -350,49 +355,6 @@ window.addEventListener("message", async e => {
     const endIndex = initialConfig.indexOf('\n\n')
     const config = initialConfig.substr(0, endIndex - 1)
     return config || '{}'
-  }
-
-  // ---- MP4 ---- (baixar)
-  // Obtem o link direto pelo trailer (premium)
-  function getDirectFile(url) {
-    return url.replace(/\/clipFrom.*?index.m3u8/, '').replace('_,', '_').replace(url.split("/")[2], "fy.v.vrv.co");
-  }
-
-  // Obtem o link direto pelo padrão (gratis)
-  function mp4ListFromStream(url) {
-    const cleanUrl = url.replace('evs1', 'evs').replace(url.split("/")[2], "fy.v.vrv.co");
-    const res = streamrgx.exec(cleanUrl).slice(1).map(streamfile => streamfile && cleanUrl.replace(streamrgx, `_${streamfile}`)).filter(el => el !== undefined);
-    resolveAll()
-
-    if (res.length === 3) {
-      const [el1, el2, ...tail] = res
-      return [el2, el1, ...tail]
-    }
-    return res;
-  }
-
-  // ---- M3U8 ---- (assistir)
-  // TODO: Obtem o link direto pelo trailer (premium)
-  function getDirectStream(url, idx) {
-    resolveAll();
-  }
-
-  // Obtem o link direto pelo padrão (gratis)
-  async function m3u8ListFromStream(url) {
-    const master_m3u8 = await fetch(url);
-    resolveAll();
-    return blobStream(master_m3u8);
-  }
-
-  function blobStream(stream) {
-    const blob = new Blob([stream], {
-      type: "text/plain; charset=utf-8"
-    });
-    return URL.createObjectURL(blob) + "#.m3u8";
-  }
-
-  function resolveAll() {
-    setTimeout(() => request.forEach(promise => promise.resolve()), 400)
   }
 
   function toResolution(resolution) {
