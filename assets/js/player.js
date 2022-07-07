@@ -54,7 +54,7 @@ window.addEventListener("message", async e => {
     // Padrão
     if (stream.format == 'adaptive_hls') {
       video_stream_url = stream.url;
-      video_m3u8_array[streamLang] = force_mp4 ? mp4ListFromStream(video_stream_url) : await m3u8ListFromStream(video_stream_url);
+      video_m3u8_array[streamLang] = force_mp4 ? mp4ListFromStream(video_stream_url) : m3u8ListFromStream(video_stream_url);
       video_mp4_array[streamLang] = mp4ListFromStream(video_stream_url);
     }
     // Premium
@@ -268,7 +268,7 @@ window.addEventListener("message", async e => {
   }
 
   // M3U8 (assistir) - Grátis: Obtem o link direto pelo padrão
-  async function m3u8ListFromStream(url) {
+  function m3u8ListFromStream(url) {
     return url;
   }
 
