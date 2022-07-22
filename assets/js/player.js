@@ -18,6 +18,8 @@ window.addEventListener("message", async e => {
 
   let is_beta = e.data.beta;
   let force_mp4 = e.data.force_mp4;
+  let tampermonkey = e.data.tampermonkey;
+  let tampermonkey_proxy = "https://crp-proxy.herokuapp.com/get?url=";
   let streamrgx = /_,(\d+.mp4),(\d+.mp4),(\d+.mp4),(?:(\d+.mp4),(\d+.mp4),)?.*?m3u8/;
   let video_config_media = await getConfigMedia(e.data.video_config_media, e.data.old_url);
   let video_id = video_config_media['metadata']['id'];
@@ -196,7 +198,7 @@ window.addEventListener("message", async e => {
       .addButton(rewind_iconPath, rewind_tooltipText, rewind_ButtonClickAction, rewind_id)
       .addButton(download_iconPath, download_tooltipText, download_ButtonClickAction, download_id);
 
-    if (version !== "1.2.0")
+    if (!tampermonkey && version !== "1.2.0")
       playerInstance.addButton(update_iconPath, update_tooltipText, update_ButtonClickAction, update_id);
 
     // Definir URL e Tamanho na lista de download
@@ -323,7 +325,7 @@ window.addEventListener("message", async e => {
       await $.ajax({
         async: true,
         type: "GET",
-        url: url,
+        url: tampermonkey ? tampermonkey_proxy + encodeURIComponent(url) : url,
         responseType: 'json'
       })
         .then(res => {

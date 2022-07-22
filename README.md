@@ -1,7 +1,7 @@
 # Crunchyroll iFrame Player [![Built with love](https://img.shields.io/badge/made%20with-javascript-yellow?style=for-the-badge)](https://github.com/mateus7g/crp-iframe-player/releases/latest) [![Downloads](https://img.shields.io/github/downloads/mateus7g/crp-iframe-player/total.svg?style=for-the-badge)](https://github.com/mateus7g/crp-iframe-player/releases/latest)
 
 Essa é uma extensão da comunidade que permite assistir todo conteúdo da Crunchyroll.  
-Originalmente criada por [itallolegal](https://github.com/itallolegal) (desativado) e [Hyper1025](https://github.com/Hyper1025), atualmente mantida por [Mateus7G](https://github.com/Mateus7G).  
+Originalmente criada por [itallolegal](https://github.com/itallolegal) (desativado) e [Hyper-Tx](https://github.com/Hyper-Tx), atualmente mantida por [Mateus7G](https://github.com/Mateus7G).  
 Um agradecimento especial a todos os colaboradores.
 
 Obrigado por utilizar. :)
@@ -14,7 +14,7 @@ Você pode encontrar as últimas versões disponíveis abaixo:
 
 #### Desktop (PC)
 
-Atualmente a versão para Desktop está disponível na [aqui](https://github.com/Mateus7G/crp-iframe-player/releases/latest).  
+Atualmente a versão para Desktop está disponível [aqui](https://github.com/Mateus7G/crp-iframe-player/releases/latest).  
 Para instalar veja o passo a passo [para pc](#%EF%B8%8F-como-instalar-desktop).
 
 <a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.2.0-violet?style=for-the-badge&logo=android"></a>
@@ -75,6 +75,24 @@ Verifique se o seu navegador está atualizado e prossiga:
 **7** ➜ Agora é só assistir 😉
 
 <br /><br /><br />
+
+## 🙉 Tampermonkey
+Caso esteja usando o Crunchyroll iFrame Player pelo Tampermonkey e não pela extensão, você pode ter problemas com o CORS (e receber um código 232011, veja #50), para resolver isso basta passar na função `ifrm.contentWindow.postMessage({ ... })` a chave `'tampermonkey'` com o valor `true`.  
+UserScript (pelo JarEdMaster): https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player  
+**Nota:** Não sou responsável por manter esse script  
+Mensagens que podem atualmente ser mandadas para o player:
+
+```yml
+tampermonkey: usa um proxy para fazer as requests
+lang: código do locale/idioma padrão
+playback: sem uso atualmente
+beta: caso esteja usando o crunchyroll na versão beta (requer passar old_url)
+old_url: url do video na versão antiga do site
+up_next_enable: pular episódios automaticamente (quando up_next for informado)
+up_next_cooldown: segundos para acabar e mostrar o popup do próximo episódio (0 para desativar popup)
+up_next: url do próximo vídeo a ser tocado/redirecionado (requer up_next_enable)
+force_mp4: força os vídeos a tocar em mp4 e não m3u8 (ativar essa opção deixará o loading mais lento, recomendado apenas para chromecasting)
+```
 
 ## 📝 Aviso Crunchyroll Beta
 O novo site do Crunchyroll **quebra completamente** a extensão: [26#issuecomment-1006569041](https://github.com/Mateus7G/crp-iframe-player/issues/26#issuecomment-1006569041)  
