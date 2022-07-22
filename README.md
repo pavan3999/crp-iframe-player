@@ -77,10 +77,14 @@ Verifique se o seu navegador está atualizado e prossiga:
 <br /><br /><br />
 
 ## 🙉 Tampermonkey
-Caso esteja usando o Crunchyroll iFrame Player pelo Tampermonkey e não pela extensão, você pode ter problemas com o CORS (e receber um código 232011, veja #50), para resolver isso basta passar na função `ifrm.contentWindow.postMessage({ ... })` a chave `'tampermonkey'` com o valor `true`.  
+Usando o player pelo Tampermonkey (e não pela extensão) pode dar problemas com o CORS (e receber um [Código 232011](https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player/discussions/142287), veja [#50](https://github.com/Mateus7G/crp-iframe-player/issues/50)).  
+Para resolver isso basta passar na função `ifrm.contentWindow.postMessage({ ... })` a chave `'tampermonkey'` com o valor `true`.  
+
+
 UserScript (pelo JarEdMaster): https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player  
 **Nota:** Não sou responsável por manter esse script  
-Mensagens que podem atualmente ser mandadas para o player:
+
+**Mensagens que podem atualmente ser mandadas para o player via script:**
 
 ```yml
 tampermonkey: usa um proxy para fazer as requests
