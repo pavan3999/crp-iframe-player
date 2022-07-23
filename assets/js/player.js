@@ -137,7 +137,8 @@ window.addEventListener("message", async e => {
           jwplayer().seek(position)
           clearInterval(seek)
         }
-      }, 5)
+      }, 5);
+      updateWebVideoCasterAnchor()
     })
 
     // Variaveis para os botões.
@@ -169,16 +170,6 @@ window.addEventListener("message", async e => {
 
     const rewind_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() - 10)
     const forward_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() + 30)
-    const webvideocaster_ButtonClickAction = () => {
-      const locale = getSourceLocale();
-      let quality = playerInstance.getCurrentQuality() - 1;
-      quality = quality === 0 ? 1 : (quality === 1 ? 0 : quality);
-      console.log(`[CR Premium] Abrindo o WVC na qualidade de ${r[quality]}p`);
-      let urlToCast = video_mp4_array[locale][quality];
-      if (!urlToCast) urlToCast = video_mp4_array[locale][1];
-      if (!urlToCast) urlToCast = video_mp4_array[locale][0];
-      window.top.location = "wvc-x-callback://open?url=" + encodeURIComponent(urlToCast)
-    }
 
     function download_ButtonClickAction() {
       if (jwplayer().getEnvironment().OS.mobile == true) {
@@ -204,7 +195,7 @@ window.addEventListener("message", async e => {
 
     const forwardBtn = [forward_iconPath, forward_tooltipText, forward_ButtonClickAction, forward_id]
     const rewindBtn = [rewind_iconPath, rewind_tooltipText, rewind_ButtonClickAction, rewind_id]
-    const webvideocasterBtn = [webvideocaster_iconPath, webvideocaster_tooltipText, () => {}, webvideocaster_id]
+    const webvideocasterBtn = [webvideocaster_iconPath, webvideocaster_tooltipText, () => { }, webvideocaster_id]
     const downloadBtn = [download_iconPath, download_tooltipText, download_ButtonClickAction, download_id]
     const updateBtn = [update_iconPath, update_tooltipText, update_ButtonClickAction, update_id]
 
@@ -240,8 +231,7 @@ window.addEventListener("message", async e => {
 
       document.body.querySelector(".loading_container").style.display = "none";
     }).on('viewable', () => {
-      const castBtn = document.querySelector('[button="webvideocaster-video-button"]');
-      if (castBtn) castBtn.onclick = webvideocaster_ButtonClickAction;
+      updateWebVideoCasterAnchor()
       const old = document.querySelector('.jw-button-container > .jw-icon-rewind')
       if (!old) return
       const btn = query => document.querySelector(`div[button="${query}"]`)
@@ -256,7 +246,10 @@ window.addEventListener("message", async e => {
     }).on('error', e => {
       displayError(`Mais informações no Console.\n${linkIssue(`Código: ${e.code}`)}`)
       console.error(e)
-    });
+    })
+      .on('audioTrackChanged', () => updateWebVideoCasterAnchor())
+      .on('levelsChanged', () => updateWebVideoCasterAnchor())
+      .on('visualQuality', () => updateWebVideoCasterAnchor());
 
     // Salva o tempo do video a cada 7 segundos.
     setInterval(() => {
@@ -399,6 +392,33 @@ window.addEventListener("message", async e => {
         "language": lang
       }
     }).filter(track => track["language"] !== "off")
+  }
+
+  function updateWebVideoCasterAnchor() {
+    const castBtn = document.querySelector('[button="webvideocaster-video-button"]');
+    if (!castBtn) return;
+    const locale = getSourceLocale();
+    let quality = playerInstance.getCurrentQuality() - 1;
+    quality = quality === 0 ? 1 : (quality === 1 ? 0 : quality);
+    console.log(`[CR Premium] Definido o WVC na qualidade de ${r[quality]}p`);
+    let urlToCast = video_mp4_array[locale][quality];
+    if (!urlToCast) urlToCast = video_mp4_array[locale][1];
+    if (!urlToCast) urlToCast = video_mp4_array[locale][0];
+    urlToCast = "wvc-x-callback://open?url=" + encodeURIComponent(urlToCast)
+
+    if (navigator.userAgent.includes("Android")) {
+      let anchor = document.getElementById('jw-webvideocaster')
+      if (!anchor) {
+        anchor = document.createElement('a');
+        anchor.id = 'jw-webvideocaster';
+        anchor.href = urlToCast;
+        castBtn.parentNode.insertBefore(anchor, castBtn);
+        anchor.appendChild(castBtn)
+      } else {
+        anchor.href = urlToCast;
+      }
+    } else
+      castBtn.onclick = () => window.top.location = urlToCast
   }
 
   function getSourceLocale() {
