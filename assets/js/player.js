@@ -204,7 +204,7 @@ window.addEventListener("message", async e => {
 
     const forwardBtn = [forward_iconPath, forward_tooltipText, forward_ButtonClickAction, forward_id]
     const rewindBtn = [rewind_iconPath, rewind_tooltipText, rewind_ButtonClickAction, rewind_id]
-    const webvideocasterBtn = [webvideocaster_iconPath, webvideocaster_tooltipText, webvideocaster_ButtonClickAction, webvideocaster_id]
+    const webvideocasterBtn = [webvideocaster_iconPath, webvideocaster_tooltipText, () => {}, webvideocaster_id]
     const downloadBtn = [download_iconPath, download_tooltipText, download_ButtonClickAction, download_id]
     const updateBtn = [update_iconPath, update_tooltipText, update_ButtonClickAction, update_id]
 
@@ -240,6 +240,8 @@ window.addEventListener("message", async e => {
 
       document.body.querySelector(".loading_container").style.display = "none";
     }).on('viewable', () => {
+      const castBtn = document.querySelector('[button="webvideocaster-video-button"]');
+      if (castBtn) castBtn.onclick = webvideocaster_ButtonClickAction;
       const old = document.querySelector('.jw-button-container > .jw-icon-rewind')
       if (!old) return
       const btn = query => document.querySelector(`div[button="${query}"]`)
