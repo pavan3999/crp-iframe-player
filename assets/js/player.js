@@ -395,6 +395,7 @@ window.addEventListener("message", async e => {
   }
 
   function updateWebVideoCasterAnchor() {
+    const playerInstance = jwplayer();
     const castBtn = document.querySelector('[button="webvideocaster-video-button"]');
     if (!castBtn) return;
     const locale = getSourceLocale();
