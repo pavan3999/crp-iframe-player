@@ -10,14 +10,14 @@ Obrigado por utilizar. :)
 Você pode encontrar as últimas versões disponíveis abaixo:  
 
 
-<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https://img.shields.io/badge/desktop-v1.2.0-violet?style=for-the-badge&logo=windows"></a>
+<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https://img.shields.io/badge/desktop-v1.2.1-violet?style=for-the-badge&logo=windows"></a>
 
 #### Desktop (PC)
 
 Atualmente a versão para Desktop está disponível [aqui](https://github.com/Mateus7G/crp-iframe-player/releases/latest).  
 Para instalar veja o passo a passo [para pc](#%EF%B8%8F-como-instalar-desktop).
 
-<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.2.0-violet?style=for-the-badge&logo=android"></a>
+<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.2.1-violet?style=for-the-badge&logo=android"></a>
 
 #### Android (Kiwi)
 
@@ -96,10 +96,11 @@ up_next_enable: pular episódios automaticamente (quando up_next for informado)
 up_next_cooldown: segundos para acabar e mostrar o popup do próximo episódio (0 para desativar popup)
 up_next: url do próximo vídeo a ser tocado/redirecionado (requer up_next_enable)
 force_mp4: força os vídeos a tocar em mp4 e não m3u8 (ativar essa opção deixará o loading mais lento, recomendado apenas para chromecasting)
+webvideocaster: troca o botão de download por casting do WebVideoCaster
 ```
 
 ## 📝 Aviso Crunchyroll Beta
 O novo site do Crunchyroll **quebra completamente** a extensão: [26#issuecomment-1006569041](https://github.com/Mateus7G/crp-iframe-player/issues/26#issuecomment-1006569041)  
 
-As novas versões (v1.1.0+) **ainda** são compatível pois ao acessar o novo site, seu navegador puxa os dados do vídeo do site antigo.  
+As novas versões (v1.1.0+) **ainda** são compatíveis pois ao acessar o novo site, seu navegador puxa os dados do vídeo do site antigo.  
 Isso quer dizer que, se a versão antiga do Crunchyroll for **completamente substituída** a extensão irá parar de funcionar permanentemente.

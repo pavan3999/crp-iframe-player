@@ -19,6 +19,7 @@ window.addEventListener("message", async e => {
   let is_beta = e.data.beta;
   let force_mp4 = e.data.force_mp4;
   let tampermonkey = e.data.tampermonkey;
+  let webvideocaster = e.data.webvideocaster;
   let tampermonkey_proxy = "https://crp-proxy.herokuapp.com/get?url=";
   let streamrgx = /_,(\d+.mp4),(\d+.mp4),(\d+.mp4),(?:(\d+.mp4),(\d+.mp4),)?.*?m3u8/;
   let video_config_media = await getConfigMedia(e.data.video_config_media, e.data.old_url);
@@ -152,31 +153,39 @@ window.addEventListener("message", async e => {
     let forward_id = "forward-video-button";
     let forward_tooltipText = "Avançar 30s";
 
+    let webvideocaster_iconPath = "assets/icon/webvideocaster_icon.png";
+    let webvideocaster_id = "webvideocaster-video-button";
+    let webvideocaster_tooltipText = "Abrir no WebVideoCaster";
+
     let download_iconPath = "assets/icon/download_icon.svg";
     let download_id = "download-video-button";
     let download_tooltipText = "Download";
     let didDownload = false;
-
-    const rewind_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() - 10)
-    const forward_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() + 30)
 
     const downloadModal = document.querySelectorAll(".modal")[0];
     const updateModal = document.querySelectorAll(".modal")[1];
     document.querySelectorAll("button.close-modal")[0].onclick = () => downloadModal.style.visibility = "hidden";
     document.querySelectorAll("button.close-modal")[1].onclick = () => updateModal.style.visibility = "hidden";
 
-    // function ao clicar no botao de baixar
+    const rewind_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() - 10)
+    const forward_ButtonClickAction = () => jwplayer().seek(jwplayer().getPosition() + 30)
+    const webvideocaster_ButtonClickAction = () => {
+      const locale = getSourceLocale();
+      let quality = playerInstance.getCurrentQuality() - 1;
+      quality = quality === 0 ? 1 : (quality === 1 ? 0 : quality);
+      console.log(`[CR Premium] Abrindo o WVC na qualidade de ${r[quality]}p`);
+      let urlToCast = video_mp4_array[locale][quality];
+      if (!urlToCast) urlToCast = video_mp4_array[locale][1];
+      if (!urlToCast) urlToCast = video_mp4_array[locale][0];
+      window.top.location = "wvc-x-callback://open?url=" + encodeURIComponent(urlToCast)
+    }
+
     function download_ButtonClickAction() {
-      // Se estiver no mobile, muda um pouco o design do menu
       if (jwplayer().getEnvironment().OS.mobile == true) {
         downloadModal.style.height = "170px";
         downloadModal.style.overflow = "auto";
       }
-
-      // Mostra o menu de download
       downloadModal.style.visibility = downloadModal.style.visibility === "hidden" ? "visible" : "hidden";
-
-      // Carrega os downloads
       if (!didDownload) {
         didDownload = true;
         console.log('[CR Premium] Baixando sources:')
@@ -184,7 +193,7 @@ window.addEventListener("message", async e => {
           linkDownload(id);
       }
     }
-    // function ao clicar no botao de update
+
     function update_ButtonClickAction() {
       if (jwplayer().getEnvironment().OS.mobile == true) {
         updateModal.style.height = "170px";
@@ -193,13 +202,20 @@ window.addEventListener("message", async e => {
       updateModal.style.visibility = updateModal.style.visibility === "hidden" ? "visible" : "hidden";
     }
 
-    playerInstance
-      .addButton(forward_iconPath, forward_tooltipText, forward_ButtonClickAction, forward_id)
-      .addButton(rewind_iconPath, rewind_tooltipText, rewind_ButtonClickAction, rewind_id)
-      .addButton(download_iconPath, download_tooltipText, download_ButtonClickAction, download_id);
+    const forwardBtn = [forward_iconPath, forward_tooltipText, forward_ButtonClickAction, forward_id]
+    const rewindBtn = [rewind_iconPath, rewind_tooltipText, rewind_ButtonClickAction, rewind_id]
+    const webvideocasterBtn = [webvideocaster_iconPath, webvideocaster_tooltipText, webvideocaster_ButtonClickAction, webvideocaster_id]
+    const downloadBtn = [download_iconPath, download_tooltipText, download_ButtonClickAction, download_id]
+    const updateBtn = [update_iconPath, update_tooltipText, update_ButtonClickAction, update_id]
 
-    if (!tampermonkey && version !== "1.2.0")
-      playerInstance.addButton(update_iconPath, update_tooltipText, update_ButtonClickAction, update_id);
+    playerInstance.addButton(...forwardBtn)
+    playerInstance.addButton(...rewindBtn)
+    if (webvideocaster)
+      playerInstance.addButton(...webvideocasterBtn);
+    else
+      playerInstance.addButton(...downloadBtn);
+    if (!tampermonkey && version !== "1.2.1")
+      playerInstance.addButton(...updateBtn);
 
     // Definir URL e Tamanho na lista de download
     for (let id of [1, 0, 2, 3, 4]) {
@@ -236,7 +252,8 @@ window.addEventListener("message", async e => {
       if (is_beta && document.getElementById('player_div'))
         document.getElementById('player_div').classList.add('beta-layout')
     }).on('error', e => {
-      console.log(e)
+      displayError(`Mais informações no Console.\n${linkIssue(`Código: ${e.code}`)}`)
+      console.error(e)
     });
 
     // Salva o tempo do video a cada 7 segundos.
@@ -383,10 +400,31 @@ window.addEventListener("message", async e => {
   }
 
   function getSourceLocale() {
-    const jwplayerLocale = Object.keys(lgLangs).find(el => lgLangs[el] === localStorage.getItem("jwplayer.captionLabel"))
-    if (!jwplayerLocale) localStorage.setItem("jwplayer.captionLabel", lgLangs[user_lang])
-    const sourceLocale = jwplayerLocale ? jwplayerLocale : user_lang
-    const hasUserLang = streamlist.find(stream => stream.hardsub_lang == sourceLocale);
-    return hasUserLang ? sourceLocale : 'off'
+    try {
+      const jwplayerLocale = Object.keys(lgLangs).find(el => lgLangs[el] === localStorage.getItem("jwplayer.captionLabel"));
+      if (!jwplayerLocale) localStorage.setItem("jwplayer.captionLabel", lgLangs[user_lang]);
+      const sourceLocale = jwplayerLocale ? jwplayerLocale : user_lang;
+      const hasUserLang = streamlist.find(stream => stream.hardsub_lang == sourceLocale);
+      return hasUserLang ? sourceLocale : 'off';
+    } catch (err) {
+      displayError(`Os cookies ${linkIssue("estão desativados", "51#issuecomment-1190684190")}!</code>`);
+      throw err;
+    }
+  }
+
+  function linkIssue(text, issue = "") {
+    return `<a href="https://github.com/Mateus7G/crp-iframe-player/issues/${issue}" target="_blank" style="color: rgb(244, 117, 33)">${text}</a>`
+  }
+
+  function displayError(info) {
+    const msg = "Erro ao carregar o vídeo! (>﹏<)\n" + info;
+    const loadingIcon = document.getElementById('player-loading');
+    const errorIcon = document.getElementById('player-error');
+    const loadingText = document.getElementById('loading-text');
+    const jwErrorText = document.querySelector('.jw-error-text');
+    loadingIcon.style = 'display: none;';
+    errorIcon.style = 'display: block;';
+    loadingText.innerHTML = msg.replaceAll('\n', '<span class="corta_linha"></span>');
+    if (jwErrorText) jwErrorText.innerHTML = msg.replaceAll('\n', '<span class="jw-break jw-reset"></span>');
   }
 });
