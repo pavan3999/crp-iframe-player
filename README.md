@@ -76,13 +76,17 @@ Verifique se o seu navegador está atualizado e prossiga:
 
 <br /><br /><br />
 
+## 🦊 Firefox
+Caso utilize um navegador baseado no Mozilla Firefox você também pode testar a versão adaptada pelo Rgern100 ([#38](https://github.com/Mateus7G/crp-iframe-player/issues/38#issuecomment-1193372108)) aqui:  
+https://github.com/Rgern100/crp-iframe-player-Firefox
+
 ## 🙉 Tampermonkey
-Usando o player pelo Tampermonkey (e não pela extensão) pode dar problemas com o CORS (e receber um [Código 232011](https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player/discussions/142287), veja [#50](https://github.com/Mateus7G/crp-iframe-player/issues/50)).  
+Caso esteja utilizando a versão do player deste repositório (mateus7g.github.io), utilizar o player pelo Tampermonkey (e não pela extensão) pode causar problemas com o CORS (e receber um [Código 232011](https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player/discussions/142287), veja [#50](https://github.com/Mateus7G/crp-iframe-player/issues/50)).  
 Para resolver isso basta passar na função `ifrm.contentWindow.postMessage({ ... })` a chave `'tampermonkey'` com o valor `true`.  
 
-
-UserScript (pelo JarEdMaster): https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player  
-**Nota:** Não sou responsável por manter esse script  
+UserScript 1 (pelo luiz-lp): https://github.com/luiz-lp/crpiframeplayer  
+UserScript 2 (pelo JarEdMaster): https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player  
+**Nota:** Não sou responsável por manter esses scripts  
 
 **Mensagens que podem atualmente ser mandadas para o player via script:**
 
