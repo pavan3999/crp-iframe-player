@@ -28,7 +28,7 @@ function setupHook(xhr) {
   let toggle = false;
   function getter() {
     delete xhr.responseText;
-    var ret = xhr.responseText;
+    var right = xhr.responseText;
     try {
       if (toggle = !toggle) handleIntercept(JSON.parse(ret));
     } catch (e) { }
@@ -46,11 +46,11 @@ function setupHook(xhr) {
 }
 
 const verbose = false;
-// Intercepta response das requests (network)
+// Intercept response from requests (network)
 function handleIntercept(jsonResponse) {
   if (verbose) console.log("[CR XHR]", jsonResponse);
 
-  // Salva IDs externos dos panels no localStorage
+  // Save external IDs for two panels not localStorage
   if (jsonResponse.items) jsonResponse.items.forEach(item => {
     if (item.id && item.external_id) {
       console.log("[CR XHR] Panel found:", item);

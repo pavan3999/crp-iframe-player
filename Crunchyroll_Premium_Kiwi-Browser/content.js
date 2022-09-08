@@ -2,8 +2,8 @@ const query = qry => document.body.querySelector(qry)
 var preservedState = null
 var width = 0
 
-//function que pega algo dentro dentro do html.
-function pegaString(str, first_character, last_character) {
+//function that gets something inside the html.
+function catchString(str, first_character, last_character) {
   if (str.match(first_character + "(.*)" + last_character) == null) {
     return null;
   } else {
@@ -12,14 +12,14 @@ function pegaString(str, first_character, last_character) {
   }
 }
 
-//function para remover elementos da página
+//function to remove elements from the page
 function remove(element, name, untilRemoved = false, callback = () => { }) {
   let tries = 0;
   if (untilRemoved) {
     const finishRemove = setInterval(() => {
       if (query(element) != null) {
         clearInterval(finishRemove)
-        console.log(`[CR Premium] Removendo ${name}...`);
+        console.log(`[CR Premium] Removing ${name}...`);
         const closeBtn = query(element + ' > .close-button')
         if (closeBtn) closeBtn.click()
         else query(element).style.display = 'none';
@@ -30,26 +30,26 @@ function remove(element, name, untilRemoved = false, callback = () => { }) {
       else tries++
     }, 20)
   } else if (query(element) != null) {
-    console.log(`[CR Premium] Removendo ${name}...`);
+    console.log(`[CR Premium] Removing ${name}...`);
     query(element).style.display = 'none';
   }
 }
 
-// function que optimiza a pagina para dispositivos mobile.
+// function that optimizes the page for mobile devices.
 function optimize_for_mobile() {
-  console.log("[CR Premium] Optimizando página para mobile...");
+  console.log("[CR Premium] Optimizing page for mobile...");
   width = document.body.offsetWidth;
   var carousel_move_times = 0;
   var carousel_videos_count = 0;
 
   carousel_move_times =
-    (width < 622 && width > 506) ? 4 :
+    (width < 622 && width > 506) ? 4:
       (width < 506 && width > 390) ? 3 :
-        (width < 390 && width > 274) ? 2 :
+        (width < 390 && width > 274) ? two :
           (width < 274 && width > 000) ? 1 : 5
 
 
-  //Verifica quantos videos tem no slider
+  //Check how many videos are in the slider
   function getChildNodes(node) {
     var children = new Array();
     for (var child in node.childNodes) {
@@ -71,11 +71,11 @@ function optimize_for_mobile() {
   var new_element = old_element.cloneNode(true);
   old_element.parentNode.replaceChild(new_element, old_element);
 
-  //Deixa o video pequeno denovo no primeiro episodio.
+  // Make the video small again in the first episode.
   if (document.getElementById('showmedia_video_box_wide') != null) {
     document.getElementById('showmedia_video_box_wide').id = 'showmedia_video_box';
   }
-  //Desbuga a seta de avançar o slider.
+  //Debug the slider advance arrow.
   const carouselScrollable = document.body.querySelector('div.collection-carousel-scrollable')
   const carouselArrow = document.body.querySelector('a.collection-carousel-rightarrow')
   const arrowClass = "collection-carousel-arrow collection-carousel-rightarrow"
@@ -91,26 +91,26 @@ function optimize_for_mobile() {
   }
 }
 
-//function que mudar o player para um mais simples.
+//function that changes the player to a simpler one.
 function importPlayer() {
   var HTML = document.documentElement.innerHTML;
-  console.log("[CR Old] Removendo player da Crunchyroll...");
+  console.log("[CR Old] Removing player from Crunchyroll...");
   var elem = document.getElementById('showmedia_video_player');
   elem.parentNode.removeChild(elem);
 
-  console.log("[CR Old] Pegando dados da stream...");
+  console.log("[CR Old] Getting data from stream...");
   var video_config_media = JSON.parse(pegaString(HTML, "vilos.config.media = ", ";"));
 
-  //Remove Nota do topo sobre experimentar o premium
-  //Remove avisos q o video nn pode ser visto
-  //Remove sugestão de inscrever-se para o trial gratuito
+  //Remove Top Note about trying premium
+  //Remove warnings that the video cannot be seen
+  //Remove suggestion to sign up for the free trial
 
   if (document.body.querySelector(".showmedia-trailer-notice") != null) {
     document.body.querySelector(".showmedia-trailer-notice").style.textDecoration = "line-through";
   }
   remove("#showmedia_free_trial_signup", "Free Trial Signup")
 
-  // Simular interação do usuário para deixar em fullscreen automaticamente
+  // Simulate user interaction to make it fullscreen automatically
   // var element = document.getElementById("template_scroller");
   // if (element) element.click();
 
@@ -120,16 +120,16 @@ function importPlayer() {
 
   var message = {
     'video_config_media': [JSON.stringify(video_config_media)],
-    'lang': [pegaString(HTML, 'LOCALE = "', '",')],
+    'lang': [getString(HTML, 'LOCALE = "', '",')],
     'series': series ? series.content : undefined,
     'up_next': up_next ? up_next.href : undefined,
   }
 
-  console.log("[CR Old] Adicionando o jwplayer...");
+  console.log("[CR Old] Adding jwplayer...");
   addPlayer(appendTo, message)
 }
 
-//renderiza player na versão beta
+// render player in beta version
 function importBetaPlayer(ready = false) {
   var videoPlayer = query('.video-player') || query('#frame');
   if (!ready) {
@@ -143,14 +143,14 @@ function importBetaPlayer(ready = false) {
   var titleLink = query('.show-title-link')
   if (titleLink) titleLink.style.zIndex = "2";
 
-  console.log("[CR Beta] Removendo player da Crunchyroll...");
+  console.log("[CR Beta] Removing player from Crunchyroll...");
   remove('.video-player-placeholder', 'Video Placeholder');
   remove('.video-player', 'Video Player', true);
   remove('.blocked-stream-overlay', 'Blocked Overlay', true);
   videoPlayer.src = '';
   const appendTo = videoPlayer.parentNode;
 
-  console.log("[CR Beta] Pegando dados da stream...");
+  console.log("[CR Beta] Getting data from stream...");
   var external_lang = preservedState.localization.locale.toLowerCase()
   var ep_lang = preservedState.localization.locale.replace('-', '')
   var ep_id = preservedState.watch.id
@@ -171,13 +171,13 @@ function importBetaPlayer(ready = false) {
     'series': series ? series : undefined,
   }
 
-  console.log("[CR Beta] Adicionando o jwplayer...");
-  console.log("[CR Beta] Antiga URL:", old_url);
+  console.log("[CR Beta] Adding jwplayer...");
+  console.log("[CR Beta] Old URL:", old_url);
   addPlayer(appendTo, message, true)
 }
 
 function addPlayer(element, playerInfo, beta = false) {
-  console.log("[CR Premium] Adicionando o jwplayer...");
+  console.log("[CR Premium] Adding jwplayer...");
   var ifrm = document.createElement("iframe");
   ifrm.setAttribute("id", "frame");
   ifrm.setAttribute("src", "https://mateus7g.github.io/crp-iframe-player/");
@@ -190,11 +190,11 @@ function addPlayer(element, playerInfo, beta = false) {
 
   element.appendChild(ifrm)
 
-  chrome.storage.sync.get(['forcemp4', 'aseguir', 'cooldown', 'webvideocaster'], function (items) {
-    ifrm.onload = function () {
+  chrome.storage.sync.get(['forcemp4', 'next', 'cooldown', 'webvideocaster'], function (items) {
+    ifrm.onload = function() {
       playerInfo['webvideocaster'] = items.webvideocaster === undefined ? false : items.webvideocaster;
       playerInfo['up_next_cooldown'] = items.cooldown === undefined ? 5 : items.cooldown;
-      playerInfo['up_next_enable'] = items.aseguir === undefined ? true : items.aseguir;
+      playerInfo['up_next_enable'] = items.next === undefined ? true : items.next;
       playerInfo['force_mp4'] = items.forcemp4 === undefined ? false : items.forcemp4;
       playerInfo['version'] = '1.3.0';
       playerInfo['noproxy'] = true;
@@ -206,13 +206,13 @@ function addPlayer(element, playerInfo, beta = false) {
   if (!beta && width < 796) optimize_for_mobile();
 }
 
-// function p/ redirecionar caso esteja na pg do android
+// function to redirect if on android pg
 function redirectAndroid() {
   if (window.location.href == "https://www.crunchyroll.com/interstitial/android") {
     window.location.href = "https://www.crunchyroll.com/interstitial/android?skip=1";
   }
 
-  //Adicionando metaTag para poder optimizar para o mobile.
+  //Adding metaTag to be able to optimize for mobile.
   var metaTag = document.createElement('meta');
   metaTag.name = "viewport"
   metaTag.content = "width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no"
@@ -220,7 +220,7 @@ function redirectAndroid() {
   window.scrollTo(0, 0);
 }
 
-//function ao carregar pagina.
+//function when loading page.
 function onloadfunction() {
   redirectAndroid();
 
@@ -235,11 +235,11 @@ function onloadfunction() {
   }
 }
 
-// function pra atualizar pagina quando mudar de episodio pela UI beta
+// function to refresh page when changing episodes by UI beta
 var currentURL = window.location.href;
 
 function registerChangeEpisode() {
-  setInterval(async () => {
+  setInterval(async() => {
     if (currentURL !== window.location.href) {
       currentURL = window.location.href
       if (currentURL.includes("/watch/")) {
@@ -254,7 +254,7 @@ function registerChangeEpisode() {
 }
 
 document.addEventListener("DOMContentLoaded", onloadfunction, false);
-document.onreadystatechange = function () {
+document.onreadystatechange = function() {
   if (document.readyState === "interactive") {
     console.log("[CR Beta] Searching for INITIAL_STATE")
     const HTML = document.documentElement.innerHTML
@@ -291,5 +291,5 @@ function getExternalId(id) {
 
 var s = document.createElement('script');
 s.src = chrome.runtime.getURL('interceptor.js');
-s.onload = function () { this.remove(); };
+s.onload = function() { this.remove(); };
 (document.head || document.documentElement).appendChild(s);
