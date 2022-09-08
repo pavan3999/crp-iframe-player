@@ -1,7 +1,7 @@
-# Crunchyroll iFrame Player [![Built with love](https://img.shields.io/badge/made%20with-javascript-yellow?style=for-the-badge)](https://github.com/ mateus7g/crp-iframe-player/releases/latest) [![Downloads](https://img.shields.io/github/downloads/mateus7g/crp-iframe-player/total.svg?style=for-the- badge)](https://github.com/mateus7g/crp-iframe-player/releases/latest)
+# Crunchyroll iFrame Player [![Built with love](https://img.shields.io/badge/made%20with-javascript-yellow?style=for-the-badge)](https://github.com/mateus7g/crp-iframe-player/releases/latest) [![Downloads](https://img.shields.io/github/downloads/mateus7g/crp-iframe-player/total.svg?style=for-the-badge)](https://github.com/mateus7g/crp-iframe-player/releases/latest)
 
 This is a community extension that allows you to watch all Crunchyroll content.  
-Originally created by [itallolegal](https://github.com/itallolegal) (deactivated) and [Hyper-Tx](https://github.com/Hyper-Tx), currently maintained by [Mateus7G](https:/ /github.com/Mateus7G).  
+Originally created by [itallolegal](https://github.com/itallolegal) (deactivated) and [Hyper-Tx](https://github.com/Hyper-Tx), currently maintained by [Mateus7G](https://github.com/Mateus7G).  
 A special thanks to all contributors.
 
 Thanks for using. :)
@@ -10,14 +10,14 @@ Thanks for using. :)
 You can find the latest available versions below:  
 
 
-<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https:// img.shields.io/badge/desktop-v1.3.0-violet?style=for-the-badge&logo=windows"></a>
+<a href="https://github.com/mateus7g/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Desktop" src="https://img.shields.io/badge/desktop-v1.3.0-violet?style=for-the-badge&logo=windows"></a>
 
 #### Desktop (PC)
 
 Currently the Desktop version is available [here](https://github.com/Mateus7G/crp-iframe-player/releases/latest).  
 To install see the step by step [for pc](#%EF%B8%8F-how-to-install-desktop).
 
-<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https:// img.shields.io/badge/android-v1.3.0-violet?style=for-the-badge&logo=android"></a>
+<a href="https://github.com/Mateus7G/crp-iframe-player/releases/latest" target="_blank"><img align="right" alt="Android" src="https://img.shields.io/badge/android-v1.3.0-violet?style=for-the-badge&logo=android"></a>
 
 #### Android (Kiwi)
 
@@ -30,7 +30,7 @@ The Desktop extension only works on **Chromium-based** browsers such as: Google 
 Make sure your browser is up to date and proceed:
 
 
-<img align="right" width="350" height="124" alt="Extracting downloaded file" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/installation -3.png?raw=true">
+<img align="right" width="350" height="124" alt="Extracting downloaded file" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-3.png?raw=true">
 
 **1** ➜ [download](#download) the `Crunchyroll_Premium.zip` file, and extract it:
 
@@ -42,7 +42,7 @@ Make sure your browser is up to date and proceed:
  
 **4** ➜ Select the folder [which was extracted](https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-4.png?raw=true) at the beginning of the tutorial
 
-<img align="right" width="350" height="190" alt="Details of installed extension" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/ install-5.png?raw=true">
+<img align="right" width="350" height="190" alt="Details of installed extension" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-5.png?raw=true">
 
 **5** ➜ If you did everything right, you should see a card like this in your browser.
  
@@ -54,11 +54,11 @@ Make sure your browser is up to date and proceed:
 The Android extension only works in Kiwi Browser.  
 Make sure your browser is up to date and proceed:
 
-<img align="right" width="350" height="233" alt="Kiwi Browser on Play Store" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots /installation-kiwi-1.png?raw=true&v=2">
+<img align="right" width="350" height="233" alt="Kiwi Browser on Play Store" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-kiwi-1.png?raw=true&v=2">
 
 **1** ➜ Please [download](#download) the `Crunchyroll_Premium_Kiwi-Browser.zip` file, no need to extract.
 
-**2** ➜ Download and open Kiwi Browser, available on [Google Play Store](https://play.app.goo.gl/?link=https://play.google.com/store/apps /details?id=com.kiwibrowser.browser&ddl=1&pcampaignid=web_ddl_1):  
+**2** ➜ Download and open Kiwi Browser, available on [Google Play Store](https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&ddl=1&pcampaignid=web_ddl_1):  
 
 **3** ➜ Enter the [extensions](https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-kiwi-2.png?raw=true) tab of your browser (or go directly to [`chrome://extensions`](chrome://extensions))
 
@@ -68,7 +68,7 @@ Make sure your browser is up to date and proceed:
 
 **5** ➜ Choose the `.zip` file downloaded at the beginning of the tutorial
 
-<img align="right" width="350" height="190" alt="Details of installed extension" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/ kiwi-4.png installation?raw=true">
+<img align="right" width="350" height="190" alt="Details of installed extension" src="https://raw.githubusercontent.com/mateus7g/crp-iframe-player/master/Screenshots/instalacao-kiwi-4.png?raw=true">
 
 **6** ➜ If you did everything right, you should see a card like this on your screen.  
 
@@ -81,11 +81,11 @@ If you use a browser based on Mozilla Firefox you can also test the version adap
 https://github.com/Rgern100/crp-iframe-player-Firefox
 
 ## 🙉 Tampermonkey
-If you are using the player version of this repository (mateus7g.github.io), using the player through Tampermonkey (and not through the extension) can cause problems with CORS (and receive a [Code 232011](https://greasyfork.org /en-US/scripts/411391-crunchyroll-iframe-player/discussions/142287), see [#50](https://github.com/Mateus7G/crp-iframe-player/issues/50)).  
+If you are using the player version of this repository (mateus7g.github.io), using the player through Tampermonkey (and not through the extension) can cause problems with CORS (and receive a [Code 232011](https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player/discussions/142287), see [#50](https://github.com/Mateus7G/crp-iframe-player/issues/50)).  
 To solve this, just pass in the `ifrm.contentWindow.postMessage({ ... })` function the key `'tampermonkey'` with the value `true`.  
 
 UserScript 1 (by luiz-lp): https://github.com/luiz-lp/crpiframeplayer  
-UserScript 2 (by JarEdMaster): https://greasyfork.org/en-US/scripts/411391-crunchyroll-iframe-player  
+UserScript 2 (by JarEdMaster): https://greasyfork.org/pt-BR/scripts/411391-crunchyroll-iframe-player  
 **Note:** I am not responsible for maintaining these scripts  
 
 **Messages that can currently be sent to the player via script:**
