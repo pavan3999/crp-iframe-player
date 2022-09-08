@@ -3,7 +3,7 @@ var preservedState = null
 var width = 0
 
 //function that gets something inside the html.
-function catchString(str, first_character, last_character) {
+function pegaString(str, first_character, last_character) {
   if (str.match(first_character + "(.*)" + last_character) == null) {
     return null;
   } else {
@@ -43,9 +43,9 @@ function optimize_for_mobile() {
   var carousel_videos_count = 0;
 
   carousel_move_times =
-    (width < 622 && width > 506) ? 4:
+    (width < 622 && width > 506) ? 4 :
       (width < 506 && width > 390) ? 3 :
-        (width < 390 && width > 274) ? two :
+        (width < 390 && width > 274) ? 2 :
           (width < 274 && width > 000) ? 1 : 5
 
 
@@ -120,7 +120,7 @@ function importPlayer() {
 
   var message = {
     'video_config_media': [JSON.stringify(video_config_media)],
-    'lang': [getString(HTML, 'LOCALE = "', '",')],
+    'lang': [pegaString(HTML, 'LOCALE = "', '",')],
     'series': series ? series.content : undefined,
     'up_next': up_next ? up_next.href : undefined,
   }
@@ -191,7 +191,7 @@ function addPlayer(element, playerInfo, beta = false) {
   element.appendChild(ifrm)
 
   chrome.storage.sync.get(['forcemp4', 'next', 'cooldown', 'webvideocaster'], function (items) {
-    ifrm.onload = function() {
+    ifrm.onload = function () {
       playerInfo['webvideocaster'] = items.webvideocaster === undefined ? false : items.webvideocaster;
       playerInfo['up_next_cooldown'] = items.cooldown === undefined ? 5 : items.cooldown;
       playerInfo['up_next_enable'] = items.next === undefined ? true : items.next;
@@ -239,7 +239,7 @@ function onloadfunction() {
 var currentURL = window.location.href;
 
 function registerChangeEpisode() {
-  setInterval(async() => {
+  setInterval(async () => {
     if (currentURL !== window.location.href) {
       currentURL = window.location.href
       if (currentURL.includes("/watch/")) {
@@ -254,7 +254,7 @@ function registerChangeEpisode() {
 }
 
 document.addEventListener("DOMContentLoaded", onloadfunction, false);
-document.onreadystatechange = function() {
+document.onreadystatechange = function () {
   if (document.readyState === "interactive") {
     console.log("[CR Beta] Searching for INITIAL_STATE")
     const HTML = document.documentElement.innerHTML
@@ -291,5 +291,5 @@ function getExternalId(id) {
 
 var s = document.createElement('script');
 s.src = chrome.runtime.getURL('interceptor.js');
-s.onload = function() { this.remove(); };
+s.onload = function () { this.remove(); };
 (document.head || document.documentElement).appendChild(s);
