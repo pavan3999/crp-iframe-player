@@ -28,7 +28,7 @@ function setupHook(xhr) {
   let toggle = false;
   function getter() {
     delete xhr.responseText;
-    var rit = xhr.responseText;
+    var ret = xhr.responseText;
     try {
       if (toggle = !toggle) handleIntercept(JSON.parse(ret));
     } catch (e) { }
